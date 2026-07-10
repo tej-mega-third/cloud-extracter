@@ -1,110 +1,65 @@
-# #!/bin/bash
-# set -e
-
-# # =========================================================================
-# # 🔄 WORKSPACE SYNCHRONIZATION
-# # =========================================================================
-# cd /workspaces/cloud-extracter
-
-# echo "🧼 Sanitizing previous background workers..."
-# pkill -f uvicorn || true
-# pkill -f ngrok || true
-# sleep 2
-
-# echo "🚀 Launching high-performance FastAPI server layer..."
-# nohup python3 -m uvicorn server:app --host 0.0.0.0 --port 5000 > /tmp/server.log 2>&1 &
-
-# echo "📡 Verification: Waiting for port 5000 socket binding..."
-# for i in {1..30}; do
-#     if ss -tulpn | grep ':5000' > /dev/null; then
-#         echo "✅ SUCCESS: API Engine port 5000 is open and listening!"
-#         break
-#     fi
-#     sleep 2
-# done
-
-# echo "🌐 Injecting secure external public Ngrok network tunnel..."
-# nohup ngrok http --url=pristine-gizzard-dipped.ngrok-free.dev 5000 > /tmp/ngrok.log 2>&1 &
-
-# # =========================================================================
-# # 🛡️ SHIELD LOCKED UNTIL LOCAL SYNC CALL DROPS IN
-# # =========================================================================
-# echo "🛡️ Shield Activated: Locking execution shell open for local data streaming..."
-# while true; do
-#     if ! pgrep -f uvicorn > /dev/null; then
-#         echo "🚨 Alert: API Server stopped processing requests. Breaking stay-alive shield..."
-#         break
-#     fi
-    
-#     echo "⏱️ Heartbeat Check: Direct cloud staging pipe actively serving connections..."
-#     sleep 60
-# done
-
-# # =========================================================================
-# # 🛑 AUTOMATED CLOSING SEQUENCE
-# # =========================================================================
-# echo "📥 Session Finished: Sync finalized perfectly. Collapsing cloud network..."
-# pkill -f ngrok || true
-
-# echo "🧼 Displaying last 20 lines of server log output for validation:"
-# tail -n 20 /tmp/server.log || true
-
-# echo "🔌 Disconnecting tunnel cleanly. Handing terminal control back to GitHub Actions..."
-# exit 0
-
 #!/bin/bash
 set -e
 
 # =========================================================================
-# 🔄 WORKSPACE SYNCHRONIZATION
+# 🔄 WORKSPACE INITIALIZATION & DEPENDENCY SYNC
 # =========================================================================
 cd /workspaces/cloud-extracter
 
-echo "📦 Syncing environment dependencies... Installing FastAPI and Uvicorn..."
-python3 -m pip install --no-cache-dir fastapi uvicorn requests
+echo "📋 Phase 1: Validating system package core dependencies..."
+sudo apt-get update
 
-echo "🧼 Sanitizing previous background workers..."
+# Install native BitTorrent core bindings if missing
+if ! python3 -c "import sys; sys.path.append('/usr/lib/python3/dist-packages'); import libtorrent" &> /dev/null; then
+    echo "📥 Installing python3-libtorrent system architecture..."
+    sudo apt-get install -y python3-libtorrent
+fi
+
+# Install Ngrok CLI framework if missing
+if ! command -v ngrok &> /dev/null; then
+    echo "📥 Installing Ngrok proxy agent cli..."
+    curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+    echo "deb https://ngrok-agent.s3.amazonaws.com bookworm main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+    sudo apt-get update && sudo apt-get install -y ngrok
+fi
+
+echo "🔑 Phase 2: Updating Ngrok account token authorization handshake..."
+ngrok config add-authtoken 3GIOravQQQVRlLEnE1UITst171V_3LJw19nNDkcv7WdLDMev
+
+echo "📦 Phase 3: Synchronizing python environment libraries..."
+python3 -m pip install --no-cache-dir fastapi uvicorn requests python-multipart
+
+echo "🧼 Phase 4: Purging historical network processing workers..."
 pkill -f uvicorn || true
 pkill -f ngrok || true
 sleep 2
 
-echo "🚀 Launching high-performance FastAPI server layer..."
+echo "🚀 Phase 5: Launching API Engine layer on port 5000..."
 nohup python3 -m uvicorn server:app --host 0.0.0.0 --port 5000 > /tmp/server.log 2>&1 &
 
-echo "📡 Verification: Waiting for port 5000 socket binding..."
+echo "📡 Phase 6: Confirming server port status allocation..."
 for i in {1..30}; do
     if ss -tulpn | grep ':5000' > /dev/null; then
-        echo "✅ SUCCESS: API Engine port 5000 is open and listening!"
+        echo "✅ SUCCESS: API Core active on port 5000."
         break
     fi
     sleep 2
 done
 
-echo "🌐 Injecting secure external public Ngrok network tunnel..."
-nohup ngrok http --url=pristine-gizzard-dipped.ngrok-free.dev 5000 > /tmp/ngrok.log 2>&1 &
+echo "🌐 Phase 7: Spawning Ngrok Dashboard Communication Tunnel..."
+nohup ngrok http --url=worrier-verbose-blustery.ngrok-free.dev 5000 > /tmp/ngrok.log 2>&1 &
 
 # =========================================================================
-# 🛡️ SHIELD LOCKED UNTIL LOCAL SYNC CALL DROPS IN
+# 🛡️ THE STAY-ALIVE SHIELD
 # =========================================================================
-echo "🛡️ Shield Activated: Locking execution shell open for local data streaming..."
+echo "🛡️ Shield Activated: Guarding active container environment shell..."
 while true; do
     if ! pgrep -f uvicorn > /dev/null; then
-        echo "🚨 Alert: API Server stopped processing requests. Breaking stay-alive shield..."
+        echo "🚨 Alert: API Server stopped processing requests. Collapsing..."
         break
     fi
-    
-    echo "⏱️ Heartbeat Check: Direct cloud staging pipe actively serving connections..."
     sleep 60
 done
 
-# =========================================================================
-# 🛑 AUTOMATED CLOSING SEQUENCE
-# =========================================================================
-echo "📥 Session Finished: Sync finalized perfectly. Collapsing cloud network..."
 pkill -f ngrok || true
-
-echo "🧼 Displaying last 20 lines of server log output for validation:"
-tail -n 20 /tmp/server.log || true
-
-echo "🔌 Disconnecting tunnel cleanly. Handing terminal control back to GitHub Actions..."
 exit 0
