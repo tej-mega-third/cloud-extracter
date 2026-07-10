@@ -1,3 +1,53 @@
+# name: Headless Extraction Pipeline Booter
+
+# on:
+#   repository_dispatch:
+#     types: [trigger_pipeline]
+
+# jobs:
+#   run-service:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout Source Code
+#         uses: actions/checkout@v4
+
+#       - name: Poll and Launch Service Loop
+#         id: launch
+#         continue-on-error: true   # Prevents remote SSH process detachment signals from failing the runner job
+#         env:
+#           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#         run: |
+#           export GH_TOKEN="${{ secrets.GH_TOKEN }}"
+          
+#           echo "📡 Step 1: Probing secure cloud instance SSH readiness status..."
+#           for i in {1..30}; do
+#             if gh codespace ssh -c improved-space-fortnight-qvv4wvjx64qvc677v -- "echo SSH_ALIVE" 2>/dev/null; then
+#               echo "✅ Codespace SSH daemon verified active!"
+#               break
+#             fi
+#             sleep 5
+#           done
+
+#           echo "🚀 Step 2: Injecting workspace environment and firing background proxy..."
+#           gh codespace ssh -c improved-space-fortnight-qvv4wvjx64qvc677v -- "cd /workspaces/cloud-extracter && chmod +x start_service.sh && bash start_service.sh"
+
+#       - name: Hard Power-Off Enforcement
+#         if: always()   # Guarantees the cloud machine is forced shut down even if previous steps error out
+#         env:
+#           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#         run: |
+#           export GH_TOKEN="${{ secrets.GH_TOKEN }}"
+#           echo "🔌 Step 3: Local pipeline transfer sequence finished. Hard-stopping cloud machine instance..."
+#           gh codespace stop -c improved-space-fortnight-qvv4wvjx64qvc677v || true
+
+
+
+
+
+
+
+
 name: Headless Extraction Pipeline Booter
 
 on:
@@ -14,7 +64,7 @@ jobs:
 
       - name: Poll and Launch Service Loop
         id: launch
-        continue-on-error: true   # Prevents remote SSH process detachment signals from failing the runner job
+        continue-on-error: true   # Prevents remote process detachment from failing the runner pipeline
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
@@ -33,7 +83,7 @@ jobs:
           gh codespace ssh -c improved-space-fortnight-qvv4wvjx64qvc677v -- "cd /workspaces/cloud-extracter && chmod +x start_service.sh && bash start_service.sh"
 
       - name: Hard Power-Off Enforcement
-        if: always()   # Guarantees the cloud machine is forced shut down even if previous steps error out
+        if: always()   # Guarantees the instance is shut down under all conditions to prevent idle run costs
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
