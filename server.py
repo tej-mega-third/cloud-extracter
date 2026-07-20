@@ -1025,7 +1025,7 @@
 
 
 
-
+# final working dont touch plsss
 
 
 import sys
@@ -1459,7 +1459,7 @@ def download_huggingface_worker(repo_id: str, repo_type: str):
         logger.info(f"Ensuring parent extraction target space exists inside Google Drive path: {dest_dir}")
         subprocess.run(["rclone", "mkdir", dest_dir, "--config", resolved_config_path], capture_output=True)
 
-        MAX_STREAMING_WORKERS = min(4, total_files) # Optimized: set to 4 to protect Drive API Creation quotas
+        MAX_STREAMING_WORKERS = min(6, total_files) # Optimized: set to 4 to protect Drive API Creation quotas
         logger.info(f"Spawning target parallel execution matrix using ThreadPoolExecutor size ceiling: {MAX_STREAMING_WORKERS}")
         
         with ThreadPoolExecutor(max_workers=MAX_STREAMING_WORKERS) as executor:
